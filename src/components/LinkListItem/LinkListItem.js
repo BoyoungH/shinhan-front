@@ -1,4 +1,3 @@
-/* eslint-disable*/
 import styles from "./LinkListItem.module.css";
 import ArrowIconFill from "../../assets/images/ic_arrow_fill.png";
 const LinkListItem = ({ subText, text, imageUrl, linkUrl }) => {
