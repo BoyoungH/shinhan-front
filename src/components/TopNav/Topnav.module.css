@@ -1,0 +1,28 @@
+.container {
+    height: 65px;
+    border-bottom: 2px solid #EAEAEA;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 16px;
+}
+
+.rightButtonContainer{
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.roundButton{
+    padding:10px 14px 16px;
+    background: linear-gradient(90deg, #0094FF 0%, #0046FF 114.29%);
+    border-radius: 20px;
+
+    color: #FFF;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    cursor: pointer;
+
+}
