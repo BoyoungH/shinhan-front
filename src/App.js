@@ -1,22 +1,8 @@
+import "./styles/reset.css";
+import "./styles/global.css"; // 우선순위를 가짐
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <div className="layout">Hello World</div>
 }
 
 export default App;
