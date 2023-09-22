@@ -1,4 +1,3 @@
-
 import styles from "./EventInfo.module.css";
 const EventInfo = ({ title, text }) => {
   return (

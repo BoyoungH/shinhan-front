@@ -16,7 +16,7 @@ const TopNav = () => {
       <img src={Logo} alt="logo" />
       <div className={styles.rightButtonContainer}>
         {/*앱 다운로드 버튼 */}
-        <a href={APP_DOWNLOAD_LINK} target="blank">
+        <a href={APP_DOWNLOAD_LINK} target="_blank">
           <div className={styles.roundButton}>앱 다운로드</div>
         </a>
 

@@ -69,8 +69,8 @@ const Home = () => {
 
         {/* 기간/대상 */}
         <div className={styles.infoContainer}>
-          {events.map((event) => (
-            <EventInfo title={event.title} text={event.text} />
+          {events.map((event, index) => (
+            <EventInfo key={index} title={event.title} text={event.text} />
           ))}
         </div>
         {/* 혜택받으러가기 버튼 */}

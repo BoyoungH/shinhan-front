@@ -1,52 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./GlobalStock.module.css";
-import HeaderCard from "../../assets/images/header_1.svg";
 import LinkListItem from "../../components/LinkListItem/LinkListItem";
 import EventLogo1 from "../../assets/images/event_logo_1.png";
 import EventInfo from "../../components/EventInfo/EventInfo";
 import AccordianListItem from "../../components/AccordianListItem/AccordianListItem";
-import EventCard from "../../components/EventCard/EventCard";
+import BenefitCard from "../../components/BenefitCard/BenefitCard";
 import TopNav from "../../components/TopNav/TopNav";
 import { useNavigate } from "react-router-dom";
-import EventLogo2 from "../../assets/images/event_logo_2.png";
-import EventLogo3 from "../../assets/images/event_logo_3.png";
-
-const events = [
-  { num: 1, title: "기간", text: "2023.07.01(토) ~ 2023.12.31(일)" },
-  { num: 3, title: "대상", text: "신한투자증권 생애 첫 계좌 개설 신규 고객" },
-];
-const eventCards = [
-  {
-    cardImage: HeaderCard,
-    title: (
-      <>
-        온라인 국내주식 수수료
-        <br />
-        <span className={styles.primaryColor}>평생 혜택 </span>제공
-      </>
-    ),
-    list: [
-      "* 유관기관 제비용만 고객 부담(07.01 기준)",
-      "- 코스피, 코스닥, 코넥스 : 0.00363960%",
-      "- K-OTC : 0.09091870%",
-      "- ETF, ETN, ELW : 0.00420870%",
-
-      "* 온라인 채널 거래에 한함(증권플러스 제외)",
-    ],
-  },
-  { num: 3, title: "대상", text: "신한투자증권 생애 첫 계좌 개설 신규 고객" },
-];
+import { getStockGlobalEvents } from "../../apis/stockApis";
 
 const GlobalStock = () => {
   const navigate = useNavigate();
-  const [openAccordion1, setOpenAccordion1] = useState(false);
-  const [openAccordion2, setOpenAccordion2] = useState(false);
+  const [isOpenAccordian1, setIsOpenAccordian1] = useState(false);
+  const [isOpenAccordian2, setIsOpenAccordian2] = useState(false);
+  const [events, setEvents] = useState();
 
-  const onClickAccordion1 = () => {
-    setOpenAccordion1(!openAccordion1);
+  // 렌더링 후 호출되는 로직
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  /** 이벤트 리스트 서버에서 불러와서 events 상태에 set */
+  const fetchEvents = async () => {
+    const response = await getStockGlobalEvents();
+    setEvents(response);
   };
+
+  /**  첫번째 아코디언 아이템 클릭 이벤트*/
+  const onClickAccordion1 = () => {
+    setIsOpenAccordian1(!isOpenAccordian1);
+  };
+
+  /** 두번째 아코디언 아이템 클릭 이벤트  */
   const onClickAccordion2 = () => {
-    setOpenAccordion2(!openAccordion2);
+    setIsOpenAccordian2(!isOpenAccordian2);
   };
 
   return (
@@ -60,81 +47,66 @@ const GlobalStock = () => {
 
       <div className={styles.container}>
         <section className={styles.header}>
-          <div className={styles.headerSubTitle}>지금이 일본 투자할 타이밍</div>
-          <div className={styles.headerTitle}>
-            <span className={styles.primaryColor}>수수료 + 환전우대 혜택!</span>
-          </div>
-          {/* 카드 섹션 */}
-          <EventCard event={eventCards[0]} />
+          {/* 이벤트가 없으면(불러오기 전이면) 로딩 중 노출*/}
+          {!events && <div>로딩 중...</div>}
 
-          {/* 기간/대상 */}
-          <div className={styles.infoContainer}>
-            {events.map((event) => (
-              <EventInfo title={event.title} text={event.text} />
+          {/* 이벤트가 있으면 이벤트 UI 노출 */}
+          {events &&
+            events.map((event, index) => (
+              <div className={styles.event}>
+                <div className={styles.roundBadge}>이벤트 {index + 1}</div>
+                <div className={styles.headerSubTitle}>{event.subTitle}</div>
+                <div className={styles.headerTitle}>
+                  <span className={styles.primaryColor}>{event.title}</span>
+                </div>
+                {/* 카드 섹션 */}
+                <BenefitCard benefit={event.benefits[0]} />
+
+                {/* 기간/대상 */}
+                <div className={styles.infoContainer}>
+                  <EventInfo
+                    title={"기간"}
+                    text={`${event.startDate}-${event.endDate}`}
+                  />
+                  <EventInfo title={"대상"} text={event.target} />
+                </div>
+                {/* 버튼 */}
+                <a href={event.buttonLink} target="_blank">
+                  <div className={styles.applyButton}>{event.buttonLabel}</div>
+                </a>
+              </div>
             ))}
-          </div>
-          {/* 혜택받으러가기 버튼 */}
-          <a>
-            <div className={styles.applyButton}>수수료 평생혜택 받으러가기</div>
-          </a>
         </section>
+
         {/* 아코디언 메뉴  */}
         <section className={styles.linkSection}>
-                {/* 메뉴 1 */}
-                <div>
-          <AccordianListItem
-            title={"투자에 필요한 더~ 많은 혜택"}
-            onClick={onClickAccordion1}
-            isOpen={openAccordion1}
-          />
-          <div
-            className={`${styles.linkContentContainer} ${
-              openAccordion1 ? styles.itemOpen : ""
-            }`}
-          >
-            <LinkListItem
-              subText={"수수료+환전우대 혜택까지"}
-              text={"해외주식"}
-              imageUrl={EventLogo1}
-              linkUrl={"https://digitalshinhansec.com/global"}
+          {/* 메뉴 1 */}
+          <div>
+            <AccordianListItem
+              title={"투자에 필요한 더~ 많은 혜택"}
+              onClick={onClickAccordion1}
+              isOpen={isOpenAccordian1}
             />
+            <div
+              className={`${styles.linkContentContainer} ${
+                isOpenAccordian1 ? styles.itemOpen : ""
+              }`}
+            >
+              <LinkListItem
+                subText={"수수료+환전우대 혜택까지"}
+                text={"해외주식"}
+                imageUrl={EventLogo1}
+                linkUrl={"https://digitalshinhansec.com/global"}
+              />
+            </div>
           </div>
-        </div>
 
-        {/* 메뉴 2 */}
-        <div>
+          {/* 메뉴 2 */}
           <AccordianListItem
             title={"쉽고 빠른 투자 정보"}
             onClick={onClickAccordion2}
-            isOpen={openAccordion2}
+            isOpen={isOpenAccordian2}
           />
-          <div
-            className={`${styles.linkContentContainer} ${
-              openAccordion2 ? styles.itemOpen : ""
-            }`}
-          >
-            <LinkListItem
-              subText={"쉽게 이해되는 투자 콘텐츠가 가득!"}
-              text={"<알파TV> 구독하기"}
-              imageUrl={EventLogo2}
-              linkUrl={"https://www.youtube.com/@shinhansecurities"}
-            />
-          </div>
-
-          <div
-            className={`${styles.linkContentContainer} ${
-              openAccordion2 ? styles.itemOpen : ""
-            }`}
-          >
-            <LinkListItem
-              subText={"한발 빠르게 만나보는 투자 콘텐츠!"}
-              text={"카카오톡 채널 추가하기"}
-              imageUrl={EventLogo3}
-              linkUrl={"https://pf.kakao.com/_xdnLFd"}
-            />
-          </div>
-
-        </div>
         </section>
 
         {/* 이벤트 유의사항 */}
